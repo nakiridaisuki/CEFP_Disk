@@ -10,6 +10,7 @@ dependencies = [
     "flask>=3.1.1",
     "flask-jwt-extended>=4.7.1",
     "flask-limiter>=3.11.0",
+    "flask-sqlalchemy>=3.1.1",
     "flask-testing>=0.8.1",
     "pillow>=11.2.1",
     "pyotp>=2.9.0",

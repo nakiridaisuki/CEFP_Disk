@@ -9,6 +9,7 @@ import base64
 from flask_jwt_extended import create_access_token
 from api.extention import db
 from api.utils import standard_response
+from models import Users
 
 
 twofa_api = Blueprint('twofa', __name__)
@@ -43,7 +44,6 @@ def twofa_setup():
     if request.method == 'POST':
         username = request.form.get('name', None)
         reset = request.form.get('reset', False)
-        users = db.get_all_users()
 
         if username is None:
             return standard_response(
@@ -52,21 +52,21 @@ def twofa_setup():
                 code=400
             )
 
-        if not username in users:
+        user: Users = Users.query.filter_by(name=username).first()
+        if user is None:
             return standard_response(
                 success=False,
-                message='User not found',
+                message="User not found",
                 code=400
             )
         
-        data = db.get_user_data(username)
-        totp_secret = data['totp_secret']
+        totp_secret = user.totp_secret
 
         if reset or totp_secret is None:
             totp_secret = pyotp.random_base32()
-            data['tmp_totp_secret'] = totp_secret
-            data['totp_secret'] = None
-            db.update_user(data['id'], data)
+            user.tmp_totp_secret = totp_secret
+            user.totp_secret = None
+            db.session.commit()
 
         auth_url = pyotp.totp.TOTP(totp_secret).provisioning_uri(
             name=username,
@@ -111,7 +111,6 @@ def twofa_verify():
     if request.method == 'POST':
         username = request.form.get('name', None)
         code = request.form.get('code', None)
-        users = db.get_all_users()
 
         if username is None or code is None:
             return standard_response(
@@ -120,29 +119,27 @@ def twofa_verify():
                 code=400
             )
         
-        if not username in users:
+        user: Users = Users.query.filter_by(name=username).first()
+        if user is None:
             return standard_response(
                 success=False,
-                message='User not found',
+                message="User not found",
                 code=400
             )
-        
-        data = db.get_user_data(username)
 
-        if not data.get('tmp_totp_secret', None) is None:
+        if not user.tmp_totp_secret is None:
             first_check = True
-            totp_secret = data['tmp_totp_secret']
+            totp_secret = user.tmp_totp_secret
         else:
             first_check = False
-            totp_secret = data['totp_secret']
+            totp_secret = user.totp_secret
 
         if pyotp.TOTP(totp_secret).verify(code, valid_window=1):
-            token = create_access_token(data['id'])
-            data['access_token'] = token
+            token = create_access_token(user.id)
             if first_check:
-                data['totp_secret'] = totp_secret
-                del data['tmp_totp_secret']
-            db.update_user(data['id'], data)
+                user.totp_secret = totp_secret
+                user.tmp_totp_secret = None
+                db.session.commit()
 
             return standard_response(
                 data = {

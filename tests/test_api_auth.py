@@ -2,18 +2,17 @@ import unittest
 from flask import url_for, Response
 from flask_testing import TestCase
 from api import create_app
+import random, string
 
 class SettingBase(TestCase):
     def create_app(self):
         return create_app('testing')
 
     def setUp(self):
-        self.username = 'test001'
+        self.username = ''.join(random.choice(string.ascii_letters) for _ in range(8))
         self.password = 'admin'
 
     def tearDown(self):
-        from database import get_db
-        get_db()._clean()
         pass
 
     def signup(self) -> Response:
@@ -49,7 +48,6 @@ class CheckSignup(SettingBase):
         self.assert200(response)
         data = response.json['data']
         assert data['name'] == self.username
-        assert data['totp_secret'] == None
     
     def test_multi_signup(self):
         response = self.signup()
@@ -71,7 +69,6 @@ class CheckSignin(SettingBase):
         data = response.json['data']
         keys = data.keys()
         assert 'name' in keys
-        assert 'totp_secret' in keys
         assert 'access_token' in keys
     
     def test_nonexist_user(self):
@@ -190,11 +187,9 @@ class Check2FA(SettingBase):
         )
         self.assert400(response)
 
+
+
+
 if __name__ == '__main__':
-
-    suite = unittest.TestSuite()
-    suite.addTest(CheckSignin('test_signin'))
-    suite.addTest(CheckSignup('test_signup'))
-    suite.addTest(Check2FA('test_2fa'))
-
+    unittest.TestSuite()
     unittest.main()

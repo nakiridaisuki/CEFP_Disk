@@ -3,7 +3,8 @@ from flask import (
     request,
 )
 import bcrypt
-from api.extention import db, limiter
+from api.extention import limiter, db
+from models import Users
 from api.utils import standard_response
 
 signup_api = Blueprint('signup', __name__)
@@ -38,7 +39,6 @@ def signup():
     if request.method == 'POST':
         username = request.form.get('name', None)
         password = request.form.get('password', None)
-        users = db.get_all_users()
 
         if username is None or password is None:
             return standard_response(
@@ -47,24 +47,22 @@ def signup():
                 code=400
             )
         
-        if username in users:
+        user = Users.query.filter_by(name=username).first()
+        if not user is None:
             return standard_response(
                 success=False,
                 message="Username has been used",
                 code=403
             )
         
-        salt = bcrypt.gensalt()
-        hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+        data = Users(username, password)
+        db.session.add(data)
+        db.session.commit()
         
-        user_data = {
-            'name': username,
-            'hashed_password': hashed.decode('utf-8'),
-            'salt': salt.decode('utf-8'),
-            'totp_secret': None
-        }
-        user_data = db.add_user(user_data)
-        
-        return standard_response(data=user_data)
+        return standard_response(
+            data = {
+                'name': username
+            }
+        )
     
     

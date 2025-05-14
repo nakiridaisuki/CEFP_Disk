@@ -11,6 +11,11 @@ app.config['SWAGGER'] = {
 }
 Swagger(app)
 
+from api.extention import db
+@app.route('/')
+def index():
+    db.create_all()
+    return 'ok'
 
 if __name__ == '__main__':
     app.run(debug=True)
