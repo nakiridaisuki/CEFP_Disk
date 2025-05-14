@@ -1,0 +1,14 @@
+[project]
+name = "cefp-re"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "bcrypt>=4.3.0",
+    "flasgger>=0.9.7.1",
+    "flask>=3.1.0",
+    "flask-jwt-extended>=4.7.1",
+    "flask-limiter>=3.11.0",
+    "flask-testing>=0.8.1",
+]
