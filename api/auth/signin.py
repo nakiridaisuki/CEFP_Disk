@@ -4,13 +4,13 @@ from flask import (
 )
 from flask_jwt_extended import create_access_token
 import bcrypt
-from api.extention import db, limiter, jwt
+from api.extention import db, limiter
 from api.utils import standard_response
 
 signin_api = Blueprint('signin', __name__)
 
 @signin_api.route('/api/auth/signin', methods=['POST'])
-@limiter.limit('10 pre hour')
+@limiter.limit('5 pre minut')
 def signin():
     """
     Sign in
@@ -19,7 +19,13 @@ def signin():
         - 
     parameters:
         - name: username
+          in: formData
+          type: string
+          required: true
         - password: password
+          in: formData
+          type: string
+          required: true
     response:
         200:
             discription: success singed up
@@ -35,9 +41,16 @@ def signin():
             discription: Error password
     """
     if request.method == 'POST':
-        username = request.form['name']
-        password = request.form['password']
+        username = request.form.get('name', None)
+        password = request.form.get('password', None)
         users = db.get_all_users()
+        
+        if username is None or password is None:
+            return standard_response(
+                success=False,
+                message="No username or password",
+                code=400
+            )
         
         if not username in users:
             return standard_response(
@@ -57,8 +70,16 @@ def signin():
                 code=401
             )
         
+        if not user_data.get('totp_secret', None) is None:
+            return standard_response(
+                success=True,
+                message='Have 2fa',
+                code=302
+            )
+        
         token = create_access_token(user_data['id'])
         user_data['access_token'] = token
+        db.update_user(user_data['id'], user_data)
         
         return standard_response(data=user_data)
     

@@ -18,7 +18,13 @@ def signup():
         - 
     parameters:
         - name: username
+          in: formData
+          type: string
+          required: true
         - password: password
+          in: formData
+          type: string
+          required: true
     response:
         200:
             discription: success singed up
@@ -30,9 +36,16 @@ def signup():
             discription: username has been used
     """
     if request.method == 'POST':
-        username = request.form['name']
-        password = request.form['password']
+        username = request.form.get('name', None)
+        password = request.form.get('password', None)
         users = db.get_all_users()
+
+        if username is None or password is None:
+            return standard_response(
+                success=False,
+                message="No username or password",
+                code=400
+            )
         
         if username in users:
             return standard_response(
