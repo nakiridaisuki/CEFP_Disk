@@ -1,6 +1,7 @@
 from flask import Flask
 from config import DATABASE_URL, JWT_SECRET_KEY
 
+from models import  Users, Files
 
 def create_app(mode: str = None) -> Flask:
     app = Flask(__name__)
@@ -8,15 +9,16 @@ def create_app(mode: str = None) -> Flask:
     from api.extention import db
     app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    import modelref
     db.init_app(app)
     app.app_context().push()
-    # db.drop_all()
+
+    if mode == 'testing':
+        db.drop_all()
     db.create_all()
 
     from api.extention import jwt
-    jwt.init_app(app)
     app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY
+    jwt.init_app(app)
 
     if mode is None:
         from api.extention import limiter
@@ -34,5 +36,14 @@ def create_app(mode: str = None) -> Flask:
 
     from .file.upload import upload_api
     app.register_blueprint(upload_api)
+
+    from .file.info import fileinfo_api
+    app.register_blueprint(fileinfo_api)
+
+    from .file.download import download_api
+    app.register_blueprint(download_api)
+
+    from .file.keys import keys_api
+    app.register_blueprint(keys_api)
 
     return app

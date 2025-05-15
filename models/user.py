@@ -9,6 +9,8 @@ class Users(db.Model):
     totp_secret = db.Column(db.String(100), nullable=True)
     tmp_totp_secret = db.Column(db.String(100), nullable=True)
 
+    files = db.relationship('Files', backref='user')
+
     def __init__(self, name, password):
         self.name = name
         self.password = password

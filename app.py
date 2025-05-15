@@ -7,7 +7,16 @@ app.config['SWAGGER'] = {
     "description": "Disk API",
     "version": "0.0.1",
     "termsOfService": "",
-    "hide_top_bar": True
+    "hide_top_bar": True,
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "Add a jwt with ** Bearer token"
+        }
+    },
+    "security": "Bearer Auth"
 }
 Swagger(app)
 
