@@ -9,7 +9,7 @@ from models import Files, Users
 
 upload_api = Blueprint('upload', __name__)
 
-@upload_api.route('/api/auth/upload', methods=['POST'])
+@upload_api.route('/api/file/upload', methods=['POST'])
 @limiter.limit('30 pre minut')
 @jwt_required()
 def upload():
@@ -60,12 +60,12 @@ def upload():
     username = request.form.get('username', None)
 
     try:
-      encrypted_data = request.files['encryptedData'].read()
+      encrypted_data = request.files['encryptedFile'].read()
       encrypted_key = request.files['encryptedKey'].read()
       iv = request.files['iv'].read()
       file_name = request.form.get('filename', 'unknowfile')
       key_id = request.form['kmsKeyID']
-    except KeyError:
+    except KeyError as e:
       return standard_response(
         success=False,
         message="Lose some datas",

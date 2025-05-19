@@ -108,7 +108,7 @@ def twofa_verify():
       description: success verified
       content:
         application/json:
-          access_token: token
+          accessToken: token
     400:
       description: code not corect
   """
@@ -147,7 +147,7 @@ def twofa_verify():
 
       return standard_response(
         data = {
-          'access_token': token
+          'accessToken': token
         }
       )
     else:

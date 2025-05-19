@@ -33,7 +33,7 @@ def signin():
       content:
         application/json:
           name: username
-          access_token: token
+          accessToken: token
     302:
       description: Need 2FA code
     400:
@@ -79,7 +79,7 @@ def signin():
     return standard_response(
       data = {
         'name': username,
-        'access_token': token
+        'accessToken': token
     }
   )
 

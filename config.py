@@ -1,2 +1,2 @@
-DATABASE_URL = 'sqlite:///users.sqlite3'
+DATABASE_URL = 'sqlite:///cefpdisk.sqlite3'
 JWT_SECRET_KEY = open('./keys/jwt-secret.key', 'r').read()

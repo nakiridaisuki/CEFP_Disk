@@ -1,10 +1,13 @@
 from flask import Flask
+from flask_cors import CORS
 from config import DATABASE_URL, JWT_SECRET_KEY
 
 from models import  Users, Files
 
 def create_app(mode: str = None) -> Flask:
     app = Flask(__name__)
+
+    CORS(app)
 
     from api.extention import db
     app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
@@ -45,5 +48,8 @@ def create_app(mode: str = None) -> Flask:
 
     from .file.keys import keys_api
     app.register_blueprint(keys_api)
+
+    from .file.delete import delete_api
+    app.register_blueprint(delete_api)
 
     return app

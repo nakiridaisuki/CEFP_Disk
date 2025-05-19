@@ -1,22 +1,20 @@
 from flask import (
     Blueprint,
     request,
-    send_file
 )
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from api.extention import limiter
+from api.extention import limiter, db
 from api.utils import standard_response
 from models import Files, Users
-from io import BytesIO
 
-download_api = Blueprint('download', __name__)
+delete_api = Blueprint('delete', __name__)
 
-@download_api.route('/api/file/download', methods=['GET'])
+@delete_api.route('/api/file/delete', methods=['GET'])
 @limiter.limit('100 pre minut')
 @jwt_required()
 def download():
   """
-  Download file
+  Dlelete file
   ---
   tags:
       - About Files
@@ -24,21 +22,15 @@ def download():
   security:
     - BearerAuth: []
   parameters:
-  - name: username
-    in: formData
-    type: string
-    required: true
   - name: fileID
-    in: formData
+    in: query
     type: integer
     required: true
   responses:
     200:
-      description: Return a file
+      description: Success delete
     400:
       description: User not found
-    401:
-      description: Error access token
   """
   username = get_jwt_identity()
   file_id = int(request.args.get('fileID', None))
@@ -58,7 +50,13 @@ def download():
       code=400
     )
   
-  file: Files = Files.query.filter_by(id=file_id).first()
-  return send_file(BytesIO(file.file), download_name=file.file_name, as_attachment=True)
+  try:
+    file: Files = Files.query.filter_by(id=file_id).first()
+    db.session.delete(file)
+    db.session.commit()
+    return standard_response()
+  except:
+    return standard_response(success=False, code=500)
+  
   
     
