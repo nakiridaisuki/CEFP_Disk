@@ -45,6 +45,7 @@ def get_keys():
       description: Error access token
   """
   username = get_jwt_identity()
+  print(request.args)
   file_id = int(request.args.get('fileID', None))
   
   if username is None or file_id is None:

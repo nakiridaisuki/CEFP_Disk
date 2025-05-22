@@ -27,4 +27,7 @@ def index():
     return 'ok'
 
 if __name__ == '__main__':
-    app.run(debug=True, host='127.0.0.1')
+    certificate_path = 'keys/server.crt'
+    private_key_path = 'keys/server.key'
+
+    app.run(debug=True, host='127.0.0.1', port=5000)
