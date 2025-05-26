@@ -40,8 +40,8 @@ def create_app(mode: str = None) -> Flask:
     from .file.upload import upload_api
     app.register_blueprint(upload_api)
 
-    from .file.info import fileinfo_api
-    app.register_blueprint(fileinfo_api)
+    from .file.info import info_api
+    app.register_blueprint(info_api)
 
     from .file.download import download_api
     app.register_blueprint(download_api)
@@ -51,5 +51,8 @@ def create_app(mode: str = None) -> Flask:
 
     from .file.delete import delete_api
     app.register_blueprint(delete_api)
+
+    from .file.update import update_api
+    app.register_blueprint(update_api)
 
     return app

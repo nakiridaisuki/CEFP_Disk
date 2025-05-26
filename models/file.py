@@ -12,9 +12,9 @@ class Files(db.Model):
     encrypted_key = db.Column(db.BLOB, nullable=False)
     file = db.Column(db.BLOB, nullable=False)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    owner_name = db.Column(db.String(100), nullable=True)
 
-    def __init__(self, filename, keyid, encryptedkey, iv, file, userid):
+    def __init__(self, filename, keyid, encryptedkey, iv, file, username):
         self.file_name = filename
         self.key_id = keyid
         self.encrypted_key = encryptedkey
@@ -22,4 +22,4 @@ class Files(db.Model):
         self.file = file
         self.upload_time = datetime.utcnow().isoformat(timespec='seconds')
         self.file_size = len(file)
-        self.user_id = userid
+        self.owner_name = username

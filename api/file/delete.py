@@ -50,13 +50,18 @@ def download():
       code=400
     )
   
-  try:
-    file: Files = Files.query.filter_by(id=file_id).first()
-    db.session.delete(file)
-    db.session.commit()
-    return standard_response()
-  except:
-    return standard_response(success=False, code=500)
+  file: Files = Files.query.filter_by(id=file_id).first()
+
+  if file.owner_name != username:
+    return standard_response(
+      success=False,
+      message="permission denied",
+      code=401
+    )
+
+  db.session.delete(file)
+  db.session.commit()
+  return standard_response()
   
   
     

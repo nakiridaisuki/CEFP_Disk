@@ -88,7 +88,8 @@ def upload():
       )
 
     
-    file = Files(file_name, key_id, encrypted_key, iv, encrypted_data, user.id)
+    file = Files(file_name, key_id, encrypted_key, iv, encrypted_data, user.name)
+    user.files.append(file)
     db.session.add(file)
     db.session.commit()
     

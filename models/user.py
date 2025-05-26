@@ -1,4 +1,5 @@
 from api.extention import db
+from . import user_files
 import bcrypt
 
 class Users(db.Model):
@@ -9,7 +10,7 @@ class Users(db.Model):
     totp_secret = db.Column(db.String(100), nullable=True)
     tmp_totp_secret = db.Column(db.String(100), nullable=True)
 
-    files = db.relationship('Files', backref='user')
+    files = db.relationship('Files', secondary=user_files, backref='user')
 
     def __init__(self, name, password):
         self.name = name
