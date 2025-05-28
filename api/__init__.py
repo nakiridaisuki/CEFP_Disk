@@ -1,11 +1,13 @@
 from flask import Flask
 from flask_cors import CORS
-from config import DATABASE_URL, JWT_SECRET_KEY
+from config import DATABASE_URL, JWT_SECRET_KEY, TEMPLATE_FOLDER, STATIC_FOLDER
 
 from models import  Users, Files
 
 def create_app(mode: str = None) -> Flask:
-    app = Flask(__name__)
+    app = Flask('app',
+                static_folder=STATIC_FOLDER,
+                template_folder=TEMPLATE_FOLDER)
 
     CORS(app)
 
