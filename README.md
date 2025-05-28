@@ -36,7 +36,7 @@ SK: Private Key\
 KID: the ID of RSA key pair\
 Ed: Encrypted data\
 Ek: encrypted data key\
-iv: AES's initialization vector\
+iv: AES's initialization vector
 
 ### 上傳檔案
 ```mermaid
