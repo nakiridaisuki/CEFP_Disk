@@ -87,7 +87,7 @@ A <<->> C: get the SK (same as above)
 
 A ->> A: use the SK to decrypt the data key
 
-A <<->> C: get the shared SK (same as above)
+A <<->> C: get the shared PK, KID (same as above)
 
 A ->> A: use the shared PK to encrypt the data key
 A ->> B: update Ek, KID
