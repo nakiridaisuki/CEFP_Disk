@@ -42,7 +42,7 @@ iv: AES's initialization vector
 ```mermaid
 sequenceDiagram
 
-participant A as Frount End
+participant A as Front End
 participant B as Disk Server
 participant C as KMS Server
 
@@ -60,7 +60,7 @@ A ->> B: save the Ed, Ek, iv, KID
 ```mermaid
 sequenceDiagram
 
-participant A as Frount End
+participant A as Front End
 participant B as Disk Server
 participant C as KMS Server
 
@@ -77,7 +77,7 @@ A ->> A: use an data key to decrypt the data
 ```mermaid
 sequenceDiagram
 
-participant A as Frount End
+participant A as Front End
 participant B as Disk Server
 participant C as KMS Server
 
